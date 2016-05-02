@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="1.0" xmlns="http://java.sun.com/xml/ns/persistence">
+  <!-- Tutorial "unit" -->
+  <persistence-unit name="TOBAPU" transaction-type="RESOURCE_LOCAL">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <non-jta-data-source>jdbc//jba</non-jta-data-source>
+    <properties>
+            <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
+            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/toba?zeroDateTimeBehavior=convertToNull" />
+            <property name="javax.persistence.jdbc.user" value="root" />
+            <property name="javax.persistence.jdbc.password" value="sesame" />
+    </properties>
+    <class>toba.db.Account</class>
+    <class>toba.beans.User</class>
+    <class>toba.db.Transaction</class>
+  </persistence-unit>
+</persistence>

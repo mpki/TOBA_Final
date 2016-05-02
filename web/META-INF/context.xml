@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<Context antiJARLocking="true" path="/TOBA-Banking_Online2-master">
+
+<Resource name="jdbc/toba"
+
+auth="Container"
+
+type="javax.sql.DataSource"
+
+username="root"
+
+password="sesame"
+
+driverClassName="com.mysql.jdbc.Driver"
+
+url="jdbc:mysql://localhost:3306/toba?zeroDateTimeBehavior=convertToNull"
+
+maxActive="15"
+
+maxIdle="3"/>
+
+</Context>
+
+ 
