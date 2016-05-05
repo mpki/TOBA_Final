@@ -19,6 +19,11 @@ maxActive="15"
 
 maxIdle="3"/>
 
+<Realm className = "org.apache.catalina.realm.DataSourceRealm" debug = "99"
+    dataSourceName="jdbc/toba" localDataSource = "true"
+    userTable="users" userNameCol = "Username" userCredCol="Password"
+    userRoleTable = "userRole"  roleNameCol="Role" />
+
 </Context>
 
  

@@ -1,8 +1,3 @@
-<%-- 
-    Document   : reports
-    Created on : May 4, 2016, 10:41:44 PM
-    Author     : Matt
---%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
