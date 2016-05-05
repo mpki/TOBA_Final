@@ -90,6 +90,8 @@ public class User implements Serializable {
     @Size(max = 100)
     @Column(name = "Transactions")
     private int Transactions;
+    @Column(name = "Salt")
+    private String salt;
     public User() {
     }
 
@@ -98,7 +100,7 @@ public class User implements Serializable {
     }
     
     public User(String username, String password, String firstName, String lastName, 
-            String phone, String city, String address, String zip, String state, String email)
+            String phone, String city, String address, String zip, String state, String email, String salt)
     {
         this.username = username;
         this.firstName = firstName;
@@ -110,6 +112,7 @@ public class User implements Serializable {
         this.state = state;
         this.email = email;
         this.password = password;
+        this.salt = salt;
     }
     
     public void ConnectAccounts(Account Savings, Account Checking)
@@ -124,6 +127,14 @@ public class User implements Serializable {
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
+    }
+    
+    public String getSalt() {
+        return this.salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
     }
 
     public String getLastName() {

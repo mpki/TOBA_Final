@@ -21,7 +21,7 @@ and open the template in the editor.
             <label> Username:</label>
             <span>${user.getUsername()}</span><br>
             <label> Password:</label>
-            <span>${user.getPassword()}</span><br><br>
+            <span>${Password}</span><br><br>
             <label> First Name:</label>
             <span>${user.getFirstName()}</span><br>
             <label> Last Name:</label>
@@ -38,8 +38,9 @@ and open the template in the editor.
             <span>${user.getCity()}</span><br>
             <label> Zip Code:</label>
             <span>${user.getZip()}</span><br>
-            
-            
+            <br><br><br><br><br>
+            <label> Stored (Hashed, Salted & Protected) Password:</label><br>
+            <span>${user.getPassword()}</span>
         </div>
     </body>
 </html>

@@ -7,6 +7,7 @@ package toba.servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,6 +22,7 @@ import toba.db.Account.AccountType;
 import static toba.db.Account.AccountType.CHECKING;
 import static toba.db.Account.AccountType.SAVINGS;
 import toba.db.AccountDB;
+import toba.db.PasswordProtection;
 
 /**
  *
@@ -61,12 +63,19 @@ public class NewCustomerServlet extends HttpServlet {
             else
             {
                 String Username = Lastname + Zipcode;
-                String Password = "welcome1";
+                String Salt = PasswordProtection.getSalt();
+                String password = "welcome1";
+                String ProtectedPassword =  null;
+                try {
+                    ProtectedPassword = PasswordProtection.hashPassword(password+Salt);
+                } catch (NoSuchAlgorithmException ex) {
+                    Logger.getLogger(NewCustomerServlet.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 /* Params
                 String username, String password, String firstName, String lastName, 
             String phone, String city, String address, String zip, String state, String email
                 */
-                User new_user = new User(Username, Password, Firstname, Lastname, Phone, City, Address, Zipcode, State, Email);
+                User new_user = new User(Username, ProtectedPassword, Firstname, Lastname, Phone, City, Address, Zipcode, State, Email, Salt);
                 try {
                     Account SavingsAccount = new Account(new_user, (float) 25.0);
                     SavingsAccount.setAccount(SAVINGS);
@@ -82,6 +91,7 @@ public class NewCustomerServlet extends HttpServlet {
                     AccountDB.insert(CheckingAccount);
                     new_user.ConnectAccounts(SavingsAccount, CheckingAccount);
                     request.getSession().setAttribute("user", new_user);
+                    request.getSession().setAttribute("Password", password);
                     UserDB.insert(new_user);
                 } catch (SQLException ex) {
                     Logger.getLogger(NewCustomerServlet.class.getName()).log(Level.SEVERE, null, ex);

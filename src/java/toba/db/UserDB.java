@@ -17,8 +17,8 @@ public class UserDB {
         PreparedStatement ps = null;
         
         String query
-                = "INSERT INTO users (FirstName, LastName, Phone, City, Address, Zip, State, Email, Username, Password, Transactions) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                = "INSERT INTO users (FirstName, LastName, Phone, City, Address, Zip, State, Email, Username, Password, Transactions, Salt) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         try
         {
@@ -35,6 +35,7 @@ public class UserDB {
             ps.setString(9, user.getUsername());
             ps.setString(10, user.getPassword());
             ps.setString(11, "0");
+            ps.setString(12, user.getSalt());
             return ps.executeUpdate();
         } catch (SQLException ex) {
             System.out.println(ex);

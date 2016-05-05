@@ -8,15 +8,23 @@ package toba.servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Base64;
 import java.util.List;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -28,6 +36,7 @@ import toba.db.Account;
 import static toba.db.Account.AccountType.CHECKING;
 import static toba.db.Account.AccountType.SAVINGS;
 import toba.db.AccountDB;
+import toba.db.PasswordProtection;
 
 /**
  *
@@ -36,6 +45,8 @@ import toba.db.AccountDB;
 @WebServlet(urlPatterns = {"/LoginServlet"})
 public class LoginServlet extends HttpServlet {
 
+
+    
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -49,10 +60,11 @@ public class LoginServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         
+
         String AttemptUser = request.getParameter("Username");
         String AttemptPass = request.getParameter("Password");
         boolean login = false;
-        String query, User, Pass;
+        String query, User, Pass, Salt;
         
         try
         {
@@ -71,13 +83,15 @@ public class LoginServlet extends HttpServlet {
                 System.out.println(User);
                 Pass = rs.getString("Password");
                 System.out.println(Pass);
+                Salt = rs.getString("Salt");
+                System.out.println(Salt);
                 
                     
                 /* Params
                 String username, String password, String firstName, String lastName, 
             String phone, String city, String address, String zip, String state, String email
                 */
-                if(AttemptUser.equals(User) && AttemptPass.equals(Pass))
+                if(AttemptUser.equals(User) && PasswordProtection.hashPassword(AttemptPass+Salt).equals(Pass))
                 {
                     System.out.println("Username and Pass match! Attempting to Assign Values to Current Session Scope");
                     String Firstname = rs.getString("FirstName");
@@ -97,7 +111,7 @@ public class LoginServlet extends HttpServlet {
                     String Email = rs.getString("Email");
                     System.out.println(Email);
                     User UReload = new User(User, Pass, Firstname, Lastname, Phone,
-                    City, Address, Zip, State, Email);
+                    City, Address, Zip, State, Email, Salt);
                     
                     System.out.println("Attempting to Retrieve Accounts attached to User");                 
                         List<Account> accounts = AccountDB.SelectAccounts(UReload.getUsername());
@@ -129,6 +143,8 @@ public class LoginServlet extends HttpServlet {
             Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
             } catch (SQLException ex) {
             Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         if(login)
@@ -144,6 +160,8 @@ public class LoginServlet extends HttpServlet {
         }
         
     }
+    
+
         // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.

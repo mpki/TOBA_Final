@@ -7,6 +7,7 @@ package toba.servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -22,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import toba.beans.User;
+import toba.db.PasswordProtection;
 import toba.db.UserDB;
 
 /**
@@ -59,10 +61,13 @@ public class ResetPasswordServlet extends HttpServlet {
             ResultSet rs = ps.executeQuery();
             
             if (rs.next()) {
-                if (Currentpass.equals(rs.getString("Password"))){
+                String Salt = rs.getString("Salt");
+                
+                
+                if (PasswordProtection.hashPassword(Currentpass+Salt).equals(rs.getString("Password"))){
                     System.out.println("Database Login Matched! Attempting to Initialize new User Entity Object");
                     User user = UserDB.selectUser(rs.getString("Email"));
-                    user.setPassword(Newpass);
+                    user.setPassword(PasswordProtection.hashPassword(Newpass+Salt));
 
                     System.out.println(user.getUsername());
                     System.out.println(user.getPassword());
@@ -90,6 +95,8 @@ public class ResetPasswordServlet extends HttpServlet {
             } catch (InstantiationException ex) {
                 Logger.getLogger(ResetPasswordServlet.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IllegalAccessException ex) {
+                Logger.getLogger(ResetPasswordServlet.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (NoSuchAlgorithmException ex) {
                 Logger.getLogger(ResetPasswordServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
 
